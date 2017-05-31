@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import render_template
+from flask import request
 import random
 
 
@@ -8,13 +9,16 @@ def random_op(a, b):
     ops = {
         "+": lambda x, y: x + y,
         "-": lambda x, y: x - y,
-        "x": lambda x, y: x * y,
     }
 
-    keys = ['+', '-', 'x']
+    keys = ['+', '-']
 
-    if a % b == 0:
-        ops['/'] = lambda x, y: x / y
+    if a != 1 and b != 1:
+        ops["x"] = lambda x, y: x * y
+        keys.append('x')
+
+    if a % b == 0 and b != 1:
+        ops['/'] = lambda x, y: x // y
         keys.append('/')
 
     while 1:
@@ -73,38 +77,48 @@ def gen_answer(numbers):
 
     return total, steps
 
+
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def countdown():
 
-    bottom_row = list(range(1, 11))
-    top_row = [100, 75, 50, 25]
-    numbers = []
-    top = random.randint(0, 4)
+    show = 'ShowSolution' in request.form
 
-    for _ in range(top):
-        numbers.append(random.choice(top_row))
+    if show:
+        top = request.form['top']
+        numbers = request.form['numbers']
+        target = request.form['target']
+        solution = request.form['solution']
+    else:
+        bottom_row = list(range(1, 11))
+        top_row = [100, 75, 50, 25]
+        numbers = []
+        top = random.randint(0, 4)
 
-    for _ in range(6 - top):
-        numbers.append(random.choice(bottom_row))
+        for _ in range(top):
+            numbers.append(random.choice(top_row))
 
-    random.shuffle(numbers)
-    while 1:
-        total, steps = gen_answer(numbers)
-        if total > 99 and total < 999:
-            break
+        for _ in range(6 - top):
+            numbers.append(random.choice(bottom_row))
 
-    random.shuffle(numbers)
+        random.shuffle(numbers)
+        while 1:
+            total, steps = gen_answer(numbers)
+            if total > 99 and total < 999:
+                break
 
-    number_str = u", ".join(str(n) for n in numbers)
-    target = u"{0}.".format(total)
-    solution = u"; ".join(str(step) for step in steps)
+        random.shuffle(numbers)
+
+        numbers = u", ".join(str(n) for n in numbers)
+        target = u"{0}.".format(total)
+        solution = u"; ".join(str(step) for step in steps)
 
     return render_template(
         'template.html',
         top=str(top),
-        number_str=number_str,
+        numbers=numbers,
         target=target,
-        solution=solution)
+        solution=solution,
+        show=show)

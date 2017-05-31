@@ -8,68 +8,24 @@
 <body>
 </style>
 <p>{{ top }} from the top!</p>
-<p>Numbers: {{ number_str }}</p>
+<p>Numbers: {{ numbers }}</p>
 <p>Target: {{ target }}</p>
 </br>
+<form action="{{ url_for('countdown') }}" method="post">
+<input type="hidden" name="top" value="{{ top }}">
+<input type="hidden" name="numbers" value="{{ numbers }}">
+<input type="hidden" name="target" value="{{ target }}">
+<input type="hidden" name="solution" value="{{ solution }}">
+{% if not show %}
+<button type="submit" name="ShowSolution" value="ShowSolution">Show Solution</button>
+{% endif %}
+<button type="submit" name="NewPuzzle" value="NewPuzzle">New Puzzle</button>
+</form>
+{% if show %}
 </br>
+<p>Solution:</p>
 </br>
-<p style="color:#ffffff;">Solution: {{ solution }}</p>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-<img src="/static/cd.jpg">
-</body>
+{% for s in solution.split(';') %}
+<p>{{ s }}</p
+{% endfor %}
+{% endif %}
