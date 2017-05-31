@@ -25,7 +25,7 @@ def random_op(a, b):
         oname = random.choice(keys)
         op = ops[oname]
 
-        if a > b and oname == '-':
+        if a < b and oname == '-':
             tmp = a
             a = b
             b = tmp
